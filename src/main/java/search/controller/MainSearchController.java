@@ -46,6 +46,7 @@ public class MainSearchController {
     public static final String PARAM_TITLE_ENGLISH = "title.english";
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_AVATAR_URL = "avatar_url";
+	public static final String PARAM_PIC_COUNT = "pic_count";
     public static final String PARAM_URL = "url";
     public static final String PARAM_SUGGEST_FIELD = "suggest";
     public static final String PARAM_SUGGEST_NAME = "suggest_album";
@@ -54,14 +55,9 @@ public class MainSearchController {
 	public static final String ELASTIC_PORT = "ELASTIC_PORT";
 	public static final String ELASTIC_SCHEME = "ELASTIC_SCHEME";
 
-//    public static final String HOST_NAME = "localhost";
-
 	public String elasticHost;
 	public int elasticPort;
 	public String elasticScheme;
-
-
-//    public static final String HOST_NAME = "118.89.186.21";
 
 	public MainSearchController() {
 
@@ -71,10 +67,12 @@ public class MainSearchController {
 			this.elasticHost = jsonObject.get(ELASTIC_HOST).getAsString();
 			this.elasticPort = jsonObject.get(ELASTIC_PORT).getAsInt();
 			this.elasticScheme = jsonObject.get(ELASTIC_SCHEME).getAsString();
-
 		} catch (IOException e) {
 			throw new RuntimeException();
 		}
+//		this.elasticHost = "localhost";
+//		this.elasticPort = 9200;
+//		this.elasticScheme = "http";
 	}
 
     /**
@@ -157,6 +155,7 @@ public class MainSearchController {
             result.setDescription((String)source.get(PARAM_CONTENT));
             result.setAvatarUrl((String)source.get(PARAM_AVATAR_URL));
             result.setUrl((String)source.get(PARAM_URL));
+            result.setPicCount(Integer.parseInt((String)source.get(PARAM_PIC_COUNT)));
             results.add(result);
         }
 

@@ -1,27 +1,23 @@
 function getUrlParam(name) {
-    //构造一个含有目标参数的正则表达式对象
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-    //匹配目标参数
     var r = window.location.search.substr(1).match(reg);
-    //返回参数值
     if (r != null) {
         return unescape(r[2]); 
     }
     return null; 
 }
 
-
-// function tfc() {
-//      if($(".dropdown-content").css("display") == "block") {
-//          $(".dropdown-content").css("display", "none");
-//      } else {
-//          $(".dropdown-content").css("display", "block");
-//      }
-// }
-
 function applyTimeFilter() {
     var start = $("#start-datepicker").val();
     var end = $("#end-datepicker").val();
+
+    if(start.length == 0) {
+        start = "1970-01-01";
+    }
+    if(end.length == 0) {
+        end = $.datepicker.formatDate("yy-mm-dd", new Date());
+    }
+
     var url = "/search?query=" + $("#query_box").val() 
                 + "&start=" + start 
                 + "&end=" + end;
@@ -38,29 +34,68 @@ function fill(data) {
     var imgSuffix = "?imageView2/1/w/250/h/250/format/jpg/q/75|imageslim";
     var div = document.createElement("div");
     div.setAttribute("class", "mansory");
-    for(var i = 0;i < data.length;i++) {
+
+    // for(var i = 0, count = 1;i < data.length;i++, count++) {
+    //     avatar = data[i]["avatarUrl"];
+    //     desc = data[i]["description"];
+    //     title = data[i]["title"];
+    //     url = data[i]["url"]
+    //     var figure = document.createElement("figure");
+    //     figure.className = "item";
+    //     var a = document.createElement("a");
+    //     a.setAttribute("href", url);
+    //     a.setAttribute("target", "_blank");
+    //     var img = document.createElement("img");
+    //     img.setAttribute("src", avatar+imgSuffix);
+    //     var caption = document.createElement("figcaption");
+    //     caption.innerText = title;
+    //     a.appendChild(img);
+    //     a.appendChild(caption);
+    //     figure.appendChild(a);
+
+    //     div.appendChild(figure);
+    //     if(count % 5 == 0) {
+    //         $("#results").append(div);
+    //         div = document.createElement("div");
+    //         div.setAttribute("class", "mansory");
+    //     }
+    // }
+
+    for(var i = 0, count = 1;i < data.length;i++, count++) {
         avatar = data[i]["avatarUrl"];
         desc = data[i]["description"];
         title = data[i]["title"];
-        url = data[i]["url"]
-        var result = document.createElement("figure");
-        result.className = "item";
+        url = data[i]["url"];
+        picCount = data[i]["picCount"];
+        var figure = document.createElement("figure");
+        figure.className = "item";
         var a = document.createElement("a");
         a.setAttribute("href", url);
+        a.setAttribute("target", "_blank");
         var img = document.createElement("img");
         img.setAttribute("src", avatar+imgSuffix);
         var caption = document.createElement("figcaption");
-        caption.innerText = title;
+        // caption.innerText = title;
+        
+        var innerDiv = document.createElement("div");
+        var h4 = document.createElement("h4");
+        h4.innerText = title;
+        var innerP = document.createElement("p");
+        innerP.innerText = picCount + " photos";
+        innerDiv.appendChild(h4);
+        innerDiv.appendChild(innerP);
+        caption.appendChild(innerDiv);
+
         a.appendChild(img);
         a.appendChild(caption);
-        result.appendChild(a);
-        // console.log(url);
+        figure.appendChild(a);
+        div.appendChild(figure);
 
-        div.appendChild(result);
-
-    }
-    if(data.length > 0) { 
-        $("#results").append(div);
+        if(count % 5 == 0) {
+            $("#results").append(div);
+            div = document.createElement("div");
+            div.setAttribute("class", "mansory");
+        }
     }
 }
 
@@ -89,7 +124,16 @@ function loadSearchData(pageCount) {
 
 function loadMoreData() {
     curPage++;
-    // console.log(curPage);
     loadSearchData();
 }
 
+// function onScroll() {
+//     console.log("hh");
+//     var scrollTop = $(window).scrollTop();
+//     var scrollHeight = $(document).height();
+//     var windowHeight = $(window).height();
+//     if (scrollTop + windowHeight == scrollHeight) {
+//         curPage++;
+//         loadSearchData(curPage);
+//     }
+// }

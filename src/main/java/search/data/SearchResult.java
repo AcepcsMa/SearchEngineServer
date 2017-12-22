@@ -9,6 +9,7 @@ public class SearchResult {
 	private String description;		// album description
 	private String url;				// album url
 	private String avatarUrl;		// album avatar url
+	private int picCount;
 
 	public String getTitle() {
 		return title;
@@ -42,6 +43,14 @@ public class SearchResult {
 		this.avatarUrl = avatarUrl;
 	}
 
+	public int getPicCount() {
+		return picCount;
+	}
+
+	public void setPicCount(int picCount) {
+		this.picCount = picCount;
+	}
+
 	@Override
 	public String toString() {
 		return "SearchResult{" +
@@ -49,6 +58,7 @@ public class SearchResult {
 				", description='" + description + '\'' +
 				", url='" + url + '\'' +
 				", avatarUrl='" + avatarUrl + '\'' +
+				", picCount=" + picCount +
 				'}';
 	}
 }
