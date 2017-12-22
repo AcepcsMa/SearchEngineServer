@@ -1,0 +1,99 @@
+
+
+a#my_profile:link
+{
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 60px;
+    color: #666666;
+    text-decoration: none;
+}
+
+a#my_profile:visited
+{
+    color: #666666;
+    text-decoration: none;
+}
+
+a#my_profile:hover
+{
+    color: aqua;
+    text-decoration: none;
+}
+
+a#my_profile:active
+{
+    color: #666666;
+    text-decoration: none;
+}
+
+#place_holder
+{
+    height: 200px;
+}
+
+div#content
+{
+    text-align: center;
+}
+
+div#title
+{
+    line-height: 170%;
+    /* overflow: auto; */
+}
+
+p#desc
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.8em;
+    color: aqua;
+}
+
+div#search
+{
+    position: relative;
+    vertical-align: middle;
+}
+
+input#query_box
+{
+    width: 30%;
+    height: 25px;
+    font-family: arial;
+    background-color: #F5F5F5;
+    cursor: text;
+    border-radius: 75px;
+    border: none;
+    padding-left: 20px;
+    outline-style: none;
+}
+
+input#query_box:hover
+{
+    box-shadow: 0 0 0 2px aqua;
+}
+
+input#search_button
+{
+    font-family: arial,sans-serif;
+    font-size:10px;
+    height: 28px;
+    color: #666666;
+    font-weight: bold;
+    background-color: #F5F5F5;
+    border-radius: 75px;
+    border: none;
+}
+
+input#search_button:hover
+{
+    color: aqua;
+}
+
+body
+{
+    background-image: url("http://p0u4yewt0.bkt.clouddn.com/indexbg.jpg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+}

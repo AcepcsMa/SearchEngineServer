@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+        <script src="/js/jquery-3.2.1.js" charset="utf-8"></script>
+        <script src="/js/result.js" charset="utf-8"></script>
+        <link href="/css/result.css" rel="stylesheet" />
+        <script src="https://cdn.staticfile.org/jqueryui/1.12.1/jquery-ui.js" charset="utf-8"></script>
+        <script src="https://cdn.staticfile.org/jqueryui/1.12.1/jquery-ui.min.js" charset="utf-8"></script>
+        <link rel="stylesheet" href="/css/jquery-ui.css" />
+
+        <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" />
+        <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <meta charset="utf-8" />
+        <meta name="title" content="search result"/>
+        <meta name="author" content="Haoxiang Ma"/>
+        <!-- <base target="_blank"/> -->
+
+        <script>
+            $(function() {
+                // $("#start-datepicker").datepicker({
+                //     showOn: "both",
+                //     buttonImage: "css/images/calendar.png",
+                //     buttonImageOnly: true,
+                //     changeMonth: true,
+                //     changeYear: true
+                // });
+                $(".datepicker").datepicker({
+                    showOn: "both",
+                    buttonImage: "css/images/calendar.png",
+                    buttonImageOnly: true,
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: "yy-mm-dd"
+                });
+                // $(".datepicker").formatDate("yy-mm-dd", new Date());
+            });
+        </script>
+
+    </head>
+    <body>
+        <div id="query_info">
+            <div id="ph">
+                
+            </div>
+            <div id="icon_div" class="div-inline">
+                <img id="icon" src="http://p0u4yewt0.bkt.clouddn.com/icon48.png"/>
+            </div>
+            <div id="query_box_div" class="div-inline">
+                <form action="/search" method="get">
+                    <input id="query_box" type="text" name="query" th:value="${query}"/>
+                    <input type="submit" value="Search" id="search_button"/>
+                </form>
+            </div>
+            <div class="t-filter">
+                <div class="div-inline" id="t-datepicker-group">
+                    <span class="t">Start At</span>
+                    <input type="text" class="datepicker" id="start-datepicker" />
+                            
+                    <span class="t" id="t-end-at">End At</span>
+                    <input type="text" class="datepicker" id="end-datepicker" />
+                </div>
+                <div class="div-inline" id="t-btn-group">
+                    <button value="Reset" class="t-btn" onclick="resetTimeFilter()">Reset</button>
+                    <button value="Apply" class="t-btn" onclick="applyTimeFilter()">Apply</button>
+                </div>
+            </div>
+        </div>
+        <div id="results">
+        </div>
+        <script>
+            var curPage = 0;
+            $(document).ready(loadSearchData(curPage++));
+            $(document).ready(loadSearchData(curPage));
+        
+            $(window).scroll(function() {
+                var scrollTop = $(this).scrollTop();
+                var scrollHeight = $(document).height();
+                var windowHeight = $(this).height();
+                if (scrollTop + windowHeight == scrollHeight) {
+                    curPage++;
+                    loadSearchData(curPage);
+                }
+            });
+        </script>
+    </body>
+</html>

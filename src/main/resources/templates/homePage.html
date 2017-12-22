@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ace Search Engine</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Haoxiang Ma" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <script src="/js/index.js" charset="utf-8"></script>
+    <script src="/js/jquery-3.2.1.js" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/jqueryui/1.12.1/jquery-ui.js" charset="utf-8"></script>
+    <script src="https://cdn.staticfile.org/jqueryui/1.12.1/jquery-ui.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="/css/jquery-ui.css" />
+</head>
+<body>
+<div id="container">
+    <div id="header" style="text-align: right;">
+    </div>
+    <div id="place_holder"></div>
+    <div id="content">
+        <div id="title">
+            <a id="my_profile" href="https://github.com/AcepcsMa" target="_blank">
+                <span id="engine_title"><i><em>Ace</em></i></span>
+            </a>
+            <p id="desc"><i>Focus on picture search</i></p>
+        </div>
+        <div id="search">
+            <form action="/search" method="get" style="text-align: center;">
+                <input id="query_box" type="text" name="query" placeholder=" Search..." oninput="ac()"/>
+                <input id="search_button" type="submit" value="Search" />
+            </form>
+        </div>
+    </div>
+    <script>
+        $("#query_box").autocomplete({
+            source: "/ac"
+        });
+    </script>
+</div>
+</body>
+</html>

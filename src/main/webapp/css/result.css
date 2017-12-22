@@ -1,0 +1,286 @@
+
+body
+{
+    width: 100%;
+}
+
+input#query_box
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.2em;
+    width: 25%;
+    height: 40px;
+    letter-spacing: 0.6px;
+    padding-left: 10px;
+    background-color: #9c9c9cc0;
+    /* background-color: white; */
+    color: white;
+    border:  rgb(21, 21, 36) 1px solid;
+    border-radius: 5px;
+    outline: none;
+}
+
+div#query_info
+{
+    width: 100%;
+    background-color: rgb(21, 21, 36);
+    /* background-color: black; */
+    height: 100px;
+}
+
+div#icon_div
+{
+    width: 10%;
+    height: 50px;
+    position: absolute;
+    margin-left: 10px;
+}
+
+div#query_box_div
+{
+    position: absolute;
+    height: 50px;
+    margin-left: 60px;
+    width: 90%;
+}
+
+div#search_button_div
+{
+    height: 50px;
+    margin-left: 5px;
+    outline-style: none;
+    box-shadow: 0 0 0 0px gray;
+}
+
+input#search_button
+{
+    position: relative;
+    font-family: arial,sans-serif;
+    font-size:1em;
+    height: 40px;
+    color: white;
+    font-weight: bold;
+    background-color: #9c9c9cc0;
+    border-radius: 75px;
+    border: rgb(21, 21, 36) 1px solid;
+    /* border: none; */
+    outline: none;
+}
+
+div.div-inline
+{
+    display: inline;
+}
+
+img#icon
+{
+    height:40px;
+    width:40px;
+}
+
+div#ph
+{
+    height: 10px;
+}
+
+div#ph-2
+{
+    height: 50px;
+}
+
+div.t-filter
+{
+    margin-top: 55px;
+    margin-left: 60px;
+}
+
+input.datepicker
+{
+    height: 26px;
+    background-color: #9c9c9cc0;
+    border:  white 1px solid;
+    border-radius: 5px;
+    outline: none;
+    color:white;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-left: 10px;
+    margin-left: 1px;
+    width: 4%;
+}
+
+div#t-btn-group
+{
+    margin-left: 15px;
+}
+
+button.t-btn
+{
+    /* position: relative; */
+    font-family: arial,sans-serif;
+    font-size:1em;
+    height: 25px;
+    color: white;
+    font-weight: bold;
+    background-color: #9c9c9cc0;
+    border-radius: 75px;
+    border: rgb(21, 21, 36) 1px solid;
+    /* border: none; */
+    outline: none;
+    width: 60px;
+    text-align: center;
+}
+
+/* #t-datepicker
+{
+    vertical-align: middle;
+} */
+
+span.t
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1em;
+    color: white;
+}
+
+span#t-end-at
+{
+    margin-left: 15px;
+}
+
+/* div.dropdown
+{
+    margin-top: 50px;
+    margin-left: 50px;
+} */
+
+/* a.dropdown-toggle
+{
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    font-size: 1em;
+} */
+
+img.ui-datepicker-trigger
+{
+    vertical-align: middle;
+}
+
+#start-datepicker
+{
+    vertical-align: middle;
+}
+
+#end-datepicker
+{
+    vertical-align: middle;
+}
+
+div#t-datepicker
+{
+    border-top-color: rgb(214, 211, 211);
+    border-top-style: solid;
+    border-top-width: 1px;
+    padding-top: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+
+/* div#t-button
+{
+    padding-top: 3px;
+    text-align: center;
+}
+
+.btn
+{
+    background-color: bisque;
+}
+
+div#t-topbar
+{
+    padding-left: 3px;
+    padding-right: 3px;
+} */
+
+
+/* results */
+
+div#results
+{
+    /* text-align: center; */
+    vertical-align: middle;
+    max-width: 70%;
+    margin: 0 auto;
+}
+
+/* Mansory */
+
+.mansory
+{
+    margin-top: 30px;
+    column-width: 300px;
+    column-gap: 15px;
+}
+
+
+/* .item
+{
+    break-inside: avoid;
+    box-sizing: border-box;
+    padding-top: 20px;
+    border: rgb(212, 212, 216) 2px solid;
+    background-size: cover;
+} */
+
+figure
+{
+    /* background: #fefefe;
+    border: 1px solid #fcfcfc;
+    box-shadow: 0 0 1px rgba(34, 25, 25, 0.4);
+    margin: 0 2px 10px;
+    padding: 10px; 
+    padding-bottom: 10px;
+    transition: opacity .4s ease-in-out;
+    break-inside: avoid;
+    display: inline-block;
+    height: 350px; */
+    break-inside: avoid;
+    transition: opacity .4s ease-in-out;
+    box-shadow: 0 0 1px rgba(34, 25, 25, 0.4);
+    margin: 0 2px 10px;
+    padding: 10px; 
+    padding-bottom: 10px;
+    display: inline-block;
+    padding-top: 15px;
+}
+
+figure a
+{
+    transition: opacity .5s;
+    opacity: 1;
+    text-decoration: none;
+    color: gray;
+}
+
+figure a:hover
+{
+    opacity: 0.3;
+    color: gray;
+    text-decoration: none;
+}
+
+figure img
+{
+    width: 100%; 
+    height: 250px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 5px;
+}
+
+figcaption
+{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
