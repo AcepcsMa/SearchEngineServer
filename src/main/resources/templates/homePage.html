@@ -12,29 +12,39 @@
     <link rel="stylesheet" href="/css/jquery-ui.css" />
 </head>
 <body>
-<div id="container">
-    <div id="header" style="text-align: right;">
-    </div>
-    <div id="place_holder"></div>
-    <div id="content">
-        <div id="title">
-            <a id="my_profile" href="https://github.com/AcepcsMa" target="_blank">
-                <span id="engine_title"><i><em>Ace</em></i></span>
-            </a>
-            <p id="desc"><i>Focus on picture search</i></p>
+    <div id="outer">
+        <canvas id="mycanvas" ></canvas>
+        <div id="container">
+            <div id="title">
+                <a id="my_profile" href="https://github.com/AcepcsMa" target="_blank">
+                    <span id="engine_title"><i><em>Ace</em></i></span>
+                </a>
+                <p id="desc"><i>Focus on picture search</i></p>
+            </div>
+            <div id="search">
+                <form action="/search" method="get" style="text-align: center;">
+                    <input id="query_box" type="text" name="query" placeholder=" Search..." oninput="ac()"/>
+                    <input id="search_button" type="submit" value="GO" />
+                </form>
+            </div>
         </div>
-        <div id="search">
-            <form action="/search" method="get" style="text-align: center;">
-                <input id="query_box" type="text" name="query" placeholder=" Search..." oninput="ac()"/>
-                <input id="search_button" type="submit" value="Search" />
-            </form>
-        </div>
     </div>
-    <script>
+    </body>
+
+    <script type="text/javascript">
+    
+        var mycanvas = document.getElementById("mycanvas");
+        w = mycanvas.width = window.innerWidth;
+        h = mycanvas.height = window.innerHeight;
+        var ctx = mycanvas.getContext("2d");
+        $(document).ready(drawBackground());
+        window.addEventListener("resize", resizeCanvas, false);
+
         $("#query_box").autocomplete({
-            source: "/ac"
+                source: "/ac"
         });
+
+        // $(document).ready(drawRandomCircle());
     </script>
-</div>
-</body>
+
 </html>

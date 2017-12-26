@@ -2,6 +2,9 @@
 body
 {
     width: 100%;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
 }
 
 input#query_box
@@ -58,7 +61,8 @@ input#search_button
     font-family: arial,sans-serif;
     font-size:1em;
     height: 40px;
-    color: white;
+    width: 60px;
+    color: yellow;
     font-weight: bold;
     background-color: #9c9c9cc0;
     border-radius: 75px;
@@ -119,7 +123,7 @@ button.t-btn
     font-family: arial,sans-serif;
     font-size:1em;
     height: 25px;
-    color: white;
+    color: yellow;
     font-weight: bold;
     background-color: #9c9c9cc0;
     border-radius: 75px;
@@ -174,7 +178,11 @@ div#results
     /* text-align: center; */
     vertical-align: middle;
     max-width: 70%;
+    width: 70%;
     margin: 0 auto;
+    height: auto;
+    flex: 1;
+    height: 100%;
 }
 
 /* Mansory */
@@ -194,58 +202,6 @@ figure
     overflow: hidden;
 }
 
-/* figure
-{
-    background: #fefefe;
-    border: 1px solid #fcfcfc;
-    box-shadow: 0 0 1px rgba(34, 25, 25, 0.4);
-    margin: 0 2px 10px;
-    padding: 10px; 
-    padding-bottom: 10px;
-    transition: opacity .4s ease-in-out;
-    break-inside: avoid;
-    display: inline-block;
-    height: 350px; 
-    
-    break-inside: avoid;
-    transition: opacity .4s ease-in-out; 
-    box-shadow: 0 0 1px rgba(34, 25, 25, 0.4);
-    margin: 0 2px 10px;
-    padding: 10px; 
-    padding-bottom: 10px;
-    display: inline-block;
-    padding-top: 15px;
-} */
-
-/* figure a
-{
-    transition: opacity .5s;
-    opacity: 1;
-    text-decoration: none;
-    color: gray;
-} */
-
-/* figure a:visited
-{
-    opacity: 0.3;
-    text-decoration: none;
-    color: rgb(94, 1, 94);
-}
-
-figure a:hover
-{
-    opacity: 0.3;
-    text-decoration: underline;
-}
-
-figure a:active
-{
-    transition: opacity .5s;
-    opacity: 0.5;
-    text-decoration: none;
-    color: gray;
-} */
-
 figure img
 {
     /* width: 100%; 
@@ -258,7 +214,7 @@ figure img
     max-width: 100%;
 	width: -webkit-calc(100% + 50px);
     width: calc(100% + 50px);
-    height: 250px;
+    /* height: 100vw; */
 	-webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
 	transition: opacity 0.35s, transform 0.35s;
 	-webkit-transform: translate3d(0,0,0);
@@ -267,10 +223,6 @@ figure img
 
 figcaption
 {
-    /* font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden; */
     text-align: left;
     position: absolute;
     top: 0;
@@ -281,8 +233,6 @@ figcaption
 
 figcaption > div {
 	position: relative;
-	/* bottom: 0;
-	left: 0; */
 	padding: 2em;
 	width: 100%;
 	height: 50%;
@@ -338,4 +288,84 @@ figure:hover p {
 	-webkit-transition-duration: 0.35s;
     transition-duration: 0.35s;
     color: yellow;
+}
+
+div#load_more
+{
+    vertical-align: middle;
+    max-width: 70%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+button.lm-btn
+{
+    font-family: arial,sans-serif;
+    font-size:1em;
+    height: 30px;
+    min-width: 100%;
+    width: 100px;
+    color: yellow;
+    font-weight: bold;
+    background-color: rgb(21, 21, 36);
+    border-radius: 75px;
+    border: rgb(21, 21, 36) 1px solid;
+    /* border: none; */
+    outline: none;
+    display: none;
+}
+
+button.lm-btn:hover
+{
+    opacity: 0.7;
+    color: yellow;
+    text-shadow: 0 0 .1em, 0 0 .2em;
+}
+
+footer#bottom_slide
+{
+    width: 100%;
+    background-color: rgb(21, 21, 36);
+    height: 60px;
+    text-align: center;
+    padding-top: 5px;
+    /* position: fixed;
+    bottom: 0; */
+}
+
+footer#bottom_slide span,
+footer#bottom_slide a
+{
+    color: yellow;
+    font-family: Arial, Helvetica, sans-serif;
+    font-style: italic;
+    text-shadow: 0 0 .1em, 0 0 .2em;
+}
+
+footer#bottom_slide a
+{
+    text-decoration: underline;
+}
+
+div#error_info
+{
+    background-color:rgb(248, 240, 226);
+    text-align: center;
+    width: 100%;
+}
+
+div#error_logo_div
+{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+div#error_msg_div
+{
+    display: inline-block;
+    vertical-align: middle;
+    color: #9c9c9cc0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 1.5em;
 }

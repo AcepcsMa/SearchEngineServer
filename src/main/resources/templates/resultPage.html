@@ -20,12 +20,14 @@
                 
             </div>
             <div id="icon_div" class="div-inline">
-                <img id="icon" src="http://p0u4yewt0.bkt.clouddn.com/icon48.png"/>
+                <a href="http://www.ace-tu.com">
+                    <img id="icon" src="http://p0u4yewt0.bkt.clouddn.com/icon48.png"/>
+                </a>
             </div>
             <div id="query_box_div" class="div-inline">
                 <form action="/search" method="get">
                     <input id="query_box" type="text" name="query" th:value="${query}"/>
-                    <input type="submit" value="Search" id="search_button"/>
+                    <input type="submit" value="GO" id="search_button"/>
                 </form>
             </div>
             <div class="t-filter">
@@ -44,20 +46,26 @@
         </div>
         <div id="results">
         </div>
+        <div id="ph">
+            
+        </div>
+        <div id="load_more">
+            <button value="Load More" class="lm-btn" onclick="loadSearchData(++curPage)">Load More</button>
+        </div>
+        <div id="ph">
+            
+        </div>
+        <footer id="bottom_slide">
+            <span>Designed and developed by Haoxiang Ma!</span>
+            <p>
+                <a href="http://www.google.com"><b>ALL ABOUT ME</b></a>
+            </p>
+        </footer>
         <script>
+            var notFound = false;
             var curPage = 0;
             $(document).ready(loadSearchData(curPage++));
-            $(document).ready(loadSearchData(curPage));
-        
-            $(window).scroll(function() {
-                var scrollTop = $(this).scrollTop();
-                var scrollHeight = $(document).height();
-                var windowHeight = $(this).height();
-                if (scrollTop + windowHeight == scrollHeight) {
-                    curPage++;
-                    loadSearchData(curPage);
-                }
-            });
+            $(document).ready(loadSearchData(curPage++));
 
             $("#query_box").autocomplete({
                 source: "/ac"
@@ -72,6 +80,12 @@
                     changeYear: true,
                     dateFormat: "yy-mm-dd"
                 });
+            });
+
+            $("#results").resize(function() {
+                $("#error_info").css("height", $("#results").innerHeight() + "px");
+                $("#error_logo_div").css("padding-top", $("#results").innerHeight()/3 + "px");
+                $("#error_msg_div").css("padding-top", $("#results").innerHeight()/3 + "px");
             });
         </script>
     </body>

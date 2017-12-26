@@ -25,41 +25,62 @@ function applyTimeFilter() {
 }
 
 function resetTimeFilter() {
-    $("#start-datepicker").attr("value", "");
-    $("#end-datepicker").attr("value", "");
+    var dates = $(".datepicker");
+    dates.each(function() {
+        $.datepicker._clearDate(this);
+    });
 }
 
-function fill(data) {
+function fill(data, pageCount) {
 
-    var imgSuffix = "?imageView2/1/w/250/h/250/format/jpg/q/75|imageslim";
+    if(data.length == 0 && notFound == true) {
+        return;
+    } else if(data.length == 0 && pageCount < 1) {
+        errorInfo = document.createElement("div");
+        errorInfo.setAttribute("id", "error_info");
+        
+        logoDiv = document.createElement("div");
+        logoDiv.setAttribute("id", "error_logo_div");
+        logoImg = document.createElement("img");
+        logoImg.setAttribute("src", "http://p0u4yewt0.bkt.clouddn.com/icon48.png");
+        logoDiv.appendChild(logoImg);
+
+        msgDiv = document.createElement("div");
+        msgDiv.setAttribute("id", "error_msg_div");
+        span = document.createElement("span");
+        span.innerText = "Sorry, we can't find any related information...";
+        span.setAttribute("style", "padding-left:10px");
+        msgDiv.appendChild(span);
+
+        // errorInfo.appendChild(logoDiv);
+        // errorInfo.appendChild(msgDiv);
+        // $("#results").append(errorInfo);
+        $("#results").css("max-width", "100%");
+        $("#results").css("width", "100%");
+        $("#results").append(logoDiv);
+        $("#results").append(msgDiv);
+        $("#results").css("background-color", "rgb(248, 240, 226)");
+        $("#results").css("text-align", "center");
+        var phs = $("#results").siblings("#ph");
+        phs.each(function() {
+            this.remove();
+        });
+        // $("#error_info").css("height", $(window).innerHeight() + "px");
+        // $("#error_info").css("height", $("#results").innerHeight() + "px");
+        // $("#error_logo_div").css("padding-top", $("#results").innerHeight()/3 + "px");
+        // $("#error_msg_div").css("padding-top", $("#results").innerHeight()/3 + "px");
+        $("#error_logo_div").css("margin-top", $(window).innerHeight()/3 + "px");
+        $("#error_msg_div").css("margin-top", $(window).innerHeight()/3 + "px");
+
+        notFound = true;
+        return;
+    } else if(data.length == 0 && pageCount >= 2) {
+        alert("Sorry, there is no more data...");
+    }
+
+    var imgSuffix = "?imageMogr2/auto-orient/thumbnail/250x250!/blur/1x0/quality/100|imageslim";
     var div = document.createElement("div");
     div.setAttribute("class", "mansory");
-
-    // for(var i = 0, count = 1;i < data.length;i++, count++) {
-    //     avatar = data[i]["avatarUrl"];
-    //     desc = data[i]["description"];
-    //     title = data[i]["title"];
-    //     url = data[i]["url"]
-    //     var figure = document.createElement("figure");
-    //     figure.className = "item";
-    //     var a = document.createElement("a");
-    //     a.setAttribute("href", url);
-    //     a.setAttribute("target", "_blank");
-    //     var img = document.createElement("img");
-    //     img.setAttribute("src", avatar+imgSuffix);
-    //     var caption = document.createElement("figcaption");
-    //     caption.innerText = title;
-    //     a.appendChild(img);
-    //     a.appendChild(caption);
-    //     figure.appendChild(a);
-
-    //     div.appendChild(figure);
-    //     if(count % 5 == 0) {
-    //         $("#results").append(div);
-    //         div = document.createElement("div");
-    //         div.setAttribute("class", "mansory");
-    //     }
-    // }
 
     for(var i = 0, count = 1;i < data.length;i++, count++) {
         avatar = data[i]["avatarUrl"];
@@ -97,6 +118,7 @@ function fill(data) {
             div.setAttribute("class", "mansory");
         }
     }
+    $(".lm-btn").css("display", "initial");
 }
 
 function loadSearchData(pageCount) {
@@ -117,7 +139,7 @@ function loadSearchData(pageCount) {
         contentType : "application/json; charset=utf-8",
         data: JSON.stringify(params),
         success: function(data, status) {
-            fill(data);
+            fill(data, pageCount);
         }
     });
 }

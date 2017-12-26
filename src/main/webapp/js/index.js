@@ -1,39 +1,73 @@
-function ac() {
-    // params = {
-    //     "suggest": {
-    //         "album-suggest": {
-    //             "prefix": $("#query_box").val(),
-    //             "completion": {
-    //                 "field": "suggest"
-    //             }
-    //         }
-    //     }
-    // };
+function drawBackground() {
 
-    // $.ajax(
-    //     {
-    //         type : "POST",
-    //         dataType : "json",
-    //         url : "http://localhost:9200/albums/album/_search",
-    //         contentType : "application/json; charset=utf-8",
-    //         data : JSON.stringify(params),
-    //         success : function(data, status) {
-    //             suggestions = new Array();
-    //             for(var i = 0;i < data["suggest"]["album-suggest"][0]["options"].length;i++) {
-    //                 suggestions.push(data["suggest"]["album-suggest"][0]["options"][i]["_source"]["title"]);
-    //             }
-    //             $( "#query_box" ).autocomplete({
-    //                 source: suggestions
-    //               });
-    //         }
-    //     }
-    // );
+    //圆形类
+    function Circle(x,y,r,color){
+        this.x = x;
+        this.y = y;
+        this.r = r;
+        // 颜色的取值范围
+        this.color = "rgb("+ (parseInt(Math.random() * 240 ) + 9) + ","+ (parseInt(Math.random() * 220 )+18) +",203)";
 
-//    $.get("/ac",
-//        {"query":$("#query_box").val()},
-//        function(data) {
-//            $( "#query_box" ).autocomplete({
-//                source: data
-//                });
-//        });
+        //随机方向
+        this.dx = Math.random() * 12 - 7;
+        this.dy = Math.random() * 12 - 7;
+        //往数组中push自己
+        circleArr.push(this);
+     }
+
+     //渲染
+     Circle.prototype.render = function(){
+        //新建一条路径
+        ctx.beginPath();
+        //创建一个圆
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, true);
+        //设置样式颜色
+        ctx.fillStyle = this.color;
+        //通过填充路径的内容区域生成实心的图形
+        ctx.fill();
+     }
+
+     //更新
+     Circle.prototype.update = function(){
+        this.x += this.dx;
+        this.y += this.dy;
+        this.r--;
+        if(this.r < 0){
+            for (var i = 0; i < circleArr.length; i++) {
+                if (circleArr[i] === this) {
+                    circleArr.splice(i,1);
+                };
+            }
+            return false;
+        }
+        return true;
+     }
+     //创建一个数组
+     var circleArr = [];
+
+     //鼠标移动事件
+     mycanvas.onmousemove = function(event){
+        new Circle(event.clientX,event.clientY,30,"orange");
+     }
+
+     //设置定时器每20毫秒更新和渲染
+     setInterval(function(){
+        ctx.clearRect(0, 0, mycanvas.scrollWidth, mycanvas.scrollHeight);
+        for (var i = 0; i < circleArr.length; i++) {
+            circleArr[i].update() && circleArr[i].render();
+        };
+     },20);
+
+     setInterval(function() {
+        var randX = Math.random() * window.innerWidth;
+        var randY = Math.random() * window.innerHeight;
+        new Circle(randX,randY,30,"orange");
+    }, 60);
+}
+
+function resizeCanvas() {
+    mycanvas = document.getElementById("mycanvas");
+    w = mycanvas.width = window.innerWidth;
+    h = mycanvas.height = window.innerHeight;
+    ctx = mycanvas.getContext("2d");
 }

@@ -2,6 +2,8 @@ package search.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import search.data.Query;
 import search.data.SearchResult;
 import org.apache.http.HttpHost;
@@ -59,6 +61,8 @@ public class MainSearchController {
 	public int elasticPort;
 	public String elasticScheme;
 
+	private static Logger logger = LogManager.getLogger(MainSearchController.class);
+
 	public MainSearchController() {
 
 		JsonParser parser = new JsonParser();
@@ -70,9 +74,6 @@ public class MainSearchController {
 		} catch (IOException e) {
 			throw new RuntimeException();
 		}
-//		this.elasticHost = "localhost";
-//		this.elasticPort = 9200;
-//		this.elasticScheme = "http";
 	}
 
     /**
@@ -82,6 +83,7 @@ public class MainSearchController {
     @GetMapping("/")
     public String homePage() {
 
+    	logger.info("VISIT");
         return "homePage";
     }
 
@@ -99,6 +101,7 @@ public class MainSearchController {
                                @RequestParam(value = "start", required = false) String start,
                                @RequestParam(value = "end", required = false) String end) {
 
+    	logger.info("QUERY:" + query);
         map.put("query", query);
 //        System.out.println(query);
         return "resultPage";
@@ -112,12 +115,9 @@ public class MainSearchController {
      */
     @PostMapping("/loadSearchResult")
     @ResponseBody
-    public List<SearchResult> getSearchResult(@RequestBody Query query) throws Exception {
+    public List<SearchResult> getSearchResult(@RequestBody Query query) {
 
         List<SearchResult> results = new ArrayList<>();
-
-        RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost(elasticHost, elasticPort, elasticScheme)));
 
         // get query parameter
         String startAt = query.getStartAt() == null
@@ -137,7 +137,8 @@ public class MainSearchController {
                 .must(QueryBuilders.rangeQuery(PARAM_PUB_TIME).gte(startAt).lte(endAt))
                 .should(QueryBuilders.matchQuery(PARAM_TITLE, queryStr))
                 .should(QueryBuilders.matchQuery(PARAM_TITLE_PINYIN, queryStr))
-                .should(QueryBuilders.matchQuery(PARAM_TITLE_ENGLISH, queryStr));
+                .should(QueryBuilders.matchQuery(PARAM_TITLE_ENGLISH, queryStr))
+				.minimumShouldMatch(1);
 
         sourceBuilder.query(elasticQuery);
         sourceBuilder.from(pageCount * RESULT_PER_PAGE).size(RESULT_PER_PAGE);
@@ -145,21 +146,36 @@ public class MainSearchController {
         searchRequest.types(DEFAULT_TYPE);
         searchRequest.source(sourceBuilder);
 
-        // send query to elastic-search and parse response
-        SearchResponse response = client.search(searchRequest);
-        SearchHits hits = response.getHits();
-        for (SearchHit hit : hits) {
-            Map<String, Object> source = hit.getSourceAsMap();
-            SearchResult result = new SearchResult();
-            result.setTitle((String)source.get(PARAM_TITLE));
-            result.setDescription((String)source.get(PARAM_CONTENT));
-            result.setAvatarUrl((String)source.get(PARAM_AVATAR_URL));
-            result.setUrl((String)source.get(PARAM_URL));
-            result.setPicCount(Integer.parseInt((String)source.get(PARAM_PIC_COUNT)));
-            results.add(result);
-        }
+		RestHighLevelClient client = null;
 
-        client.close();
+        // send query to elastic-search and parse response
+		try {
+			client = new RestHighLevelClient(
+					RestClient.builder(new HttpHost(elasticHost, elasticPort, elasticScheme)));
+			SearchResponse response = client.search(searchRequest);
+			SearchHits hits = response.getHits();
+			for (SearchHit hit : hits) {
+				Map<String, Object> source = hit.getSourceAsMap();
+				SearchResult result = new SearchResult();
+				result.setTitle((String)source.get(PARAM_TITLE));
+				result.setDescription((String)source.get(PARAM_CONTENT));
+				result.setAvatarUrl((String)source.get(PARAM_AVATAR_URL));
+				result.setUrl((String)source.get(PARAM_URL));
+				result.setPicCount(Integer.parseInt((String.valueOf(source.get(PARAM_PIC_COUNT)))));
+				results.add(result);
+			}
+		} catch (IOException e) {
+			logger.error("ERROR:" + e.toString());
+		} finally {
+			if(client != null) {
+				try {
+					client.close();
+				} catch (IOException e) {
+					logger.error("ERROR:" + e.toString());
+				}
+			}
+		}
+
         return results;
     }
 
@@ -172,11 +188,9 @@ public class MainSearchController {
     @GetMapping(value="/ac")
     @ResponseBody
     public List<String> getAutoCompletion(
-            @RequestParam(value = "term", required = true) String prefix) throws Exception {
+            @RequestParam(value = "term", required = true) String prefix) {
 
         List<String> results = new ArrayList<>();
-        RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost(elasticHost, elasticPort, elasticScheme)));
 
         // build elastic query
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -190,24 +204,33 @@ public class MainSearchController {
         searchRequest.types(DEFAULT_TYPE);
         searchRequest.source(searchSourceBuilder);
 
-        // send query and parse the response
-        SearchResponse response = client.search(searchRequest);
-        Suggest suggestions = response.getSuggest();
-        CompletionSuggestion terms = suggestions.getSuggestion(PARAM_SUGGEST_NAME);
+		RestHighLevelClient client = null;
 
-        for(CompletionSuggestion.Entry entry : terms.getEntries()) {
-            for(CompletionSuggestion.Entry.Option option : entry) {
-                results.add((String)option.getHit().getSourceAsMap().get(PARAM_TITLE));
-            }
-        }
+		try {
+			client = new RestHighLevelClient(
+					RestClient.builder(new HttpHost(elasticHost, elasticPort, elasticScheme)));
+			// send query and parse the response
+			SearchResponse response = client.search(searchRequest);
+			Suggest suggestions = response.getSuggest();
+			CompletionSuggestion terms = suggestions.getSuggestion(PARAM_SUGGEST_NAME);
 
-        client.close();
+			for(CompletionSuggestion.Entry entry : terms.getEntries()) {
+				for(CompletionSuggestion.Entry.Option option : entry) {
+					results.add((String)option.getHit().getSourceAsMap().get(PARAM_TITLE));
+				}
+			}
+		} catch (IOException e) {
+			logger.error("ERROR:" + e.toString());
+		} finally {
+			if(client != null) {
+				try {
+					client.close();
+				} catch (IOException e) {
+					logger.error("ERROR:" + e.toString());
+				}
+			}
+		}
+
         return results;
     }
-
-    @GetMapping(value="/test")
-	@ResponseBody
-    public String test() {
-    	return System.getProperty("user.dir");
-	}
 }
