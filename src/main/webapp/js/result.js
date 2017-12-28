@@ -51,10 +51,6 @@ function fill(data, pageCount) {
         span.innerText = "Sorry, we can't find any related information...";
         span.setAttribute("style", "padding-left:10px");
         msgDiv.appendChild(span);
-
-        // errorInfo.appendChild(logoDiv);
-        // errorInfo.appendChild(msgDiv);
-        // $("#results").append(errorInfo);
         $("#results").css("max-width", "100%");
         $("#results").css("width", "100%");
         $("#results").append(logoDiv);
@@ -65,10 +61,6 @@ function fill(data, pageCount) {
         phs.each(function() {
             this.remove();
         });
-        // $("#error_info").css("height", $(window).innerHeight() + "px");
-        // $("#error_info").css("height", $("#results").innerHeight() + "px");
-        // $("#error_logo_div").css("padding-top", $("#results").innerHeight()/3 + "px");
-        // $("#error_msg_div").css("padding-top", $("#results").innerHeight()/3 + "px");
         $("#error_logo_div").css("margin-top", $(window).innerHeight()/3 + "px");
         $("#error_msg_div").css("margin-top", $(window).innerHeight()/3 + "px");
 
@@ -96,7 +88,6 @@ function fill(data, pageCount) {
         var img = document.createElement("img");
         img.setAttribute("src", avatar+imgSuffix);
         var caption = document.createElement("figcaption");
-        // caption.innerText = title;
         
         var innerDiv = document.createElement("div");
         var h4 = document.createElement("h4");
@@ -121,7 +112,7 @@ function fill(data, pageCount) {
     $(".lm-btn").css("display", "initial");
 }
 
-function loadSearchData(pageCount) {
+function loadSearchData(pageCount, size) {
 
     var startAt = getUrlParam("start");
     var endAt = getUrlParam("end");
@@ -130,7 +121,8 @@ function loadSearchData(pageCount) {
         "query": $("#query_box").val(),
         "page": pageCount,
         "startAt": startAt,
-        "endAt": endAt
+        "endAt": endAt,
+        "size": size
     };
     $.ajax({
         url: "/loadSearchResult",
@@ -144,18 +136,13 @@ function loadSearchData(pageCount) {
     });
 }
 
-function loadMoreData() {
-    curPage++;
-    loadSearchData();
-}
-
-// function onScroll() {
-//     console.log("hh");
-//     var scrollTop = $(window).scrollTop();
-//     var scrollHeight = $(document).height();
-//     var windowHeight = $(window).height();
-//     if (scrollTop + windowHeight == scrollHeight) {
-//         curPage++;
-//         loadSearchData(curPage);
-//     }
+// function loadMoreData() {
+//     curPage++;
+//     loadSearchData();
 // }
+
+function initData() {
+    initSize = 20;
+    loadSearchData(curPage, initSize);
+    curPage += 2;
+}

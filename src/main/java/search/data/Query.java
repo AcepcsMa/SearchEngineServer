@@ -1,14 +1,18 @@
 package search.data;
 
+import java.time.LocalDateTime;
+
 /**
  * Class of query.
  */
 public class Query {
 
+	public static final String DEFAULT_START_AT = "1970-01-01";
 	private String query;
 	private int page;
 	private String startAt;
 	private String endAt;
+	private int size;
 
 	public String getQuery() {
 		return query;
@@ -27,7 +31,7 @@ public class Query {
 	}
 
 	public String getStartAt() {
-		return startAt;
+		return startAt == null ? DEFAULT_START_AT : startAt;
 	}
 
 	public void setStartAt(String startAt) {
@@ -35,11 +39,19 @@ public class Query {
 	}
 
 	public String getEndAt() {
-		return endAt;
+		return endAt == null ? LocalDateTime.now().toLocalDate().toString() : endAt;
 	}
 
 	public void setEndAt(String endAt) {
 		this.endAt = endAt;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
 	}
 
 	@Override
@@ -49,6 +61,7 @@ public class Query {
 				", page=" + page +
 				", startAt='" + startAt + '\'' +
 				", endAt='" + endAt + '\'' +
+				", size=" + size +
 				'}';
 	}
 }

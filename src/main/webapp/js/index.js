@@ -57,12 +57,6 @@ function drawBackground() {
             circleArr[i].update() && circleArr[i].render();
         };
      },20);
-
-     setInterval(function() {
-        var randX = Math.random() * window.innerWidth;
-        var randY = Math.random() * window.innerHeight;
-        new Circle(randX,randY,30,"orange");
-    }, 60);
 }
 
 function resizeCanvas() {

@@ -50,7 +50,7 @@
             
         </div>
         <div id="load_more">
-            <button value="Load More" class="lm-btn" onclick="loadSearchData(++curPage)">Load More</button>
+            <button value="Load More" class="lm-btn" onclick="loadSearchData(curPage++, 10)">Load More</button>
         </div>
         <div id="ph">
             
@@ -64,8 +64,12 @@
         <script>
             var notFound = false;
             var curPage = 0;
-            $(document).ready(loadSearchData(curPage++));
-            $(document).ready(loadSearchData(curPage++));
+            var finished = true;
+            // $(document).ready(loadSearchData(curPage++));
+            // $(document).ready(loadSearchData(curPage++));
+            $(document).ready(function() {
+                initData();
+            });
 
             $("#query_box").autocomplete({
                 source: "/ac"
@@ -86,6 +90,12 @@
                 $("#error_info").css("height", $("#results").innerHeight() + "px");
                 $("#error_logo_div").css("padding-top", $("#results").innerHeight()/3 + "px");
                 $("#error_msg_div").css("padding-top", $("#results").innerHeight()/3 + "px");
+            });
+
+            window.onpageshow(function(event) {
+                if(event.persisted) {
+                    window.location.reload();
+                }
             });
         </script>
     </body>

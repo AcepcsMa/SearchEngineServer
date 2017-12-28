@@ -22,6 +22,11 @@ div#title
     text-align: center;
 }
 
+span
+{
+    font-family: "WeeklyPro-Regular";
+}
+
 a#my_profile:link
 {
     /* display: block; */
@@ -81,11 +86,13 @@ input#query_box
 {
     width: 50%;
     height: 40px;
-    font-family: arial;
-    background-color: #F5F5F5;
+    font-family: "WeeklyPro-Regular";
+    /* background-color: #F5F5F5; */
+    background-color: transparent;
     cursor: text;
+    color: white;
     border-radius: 75px;
-    border: none;
+    border: 2px solid #666666;
     padding-left: 20px;
     padding-right: 20px;
     outline-style: none;
@@ -101,18 +108,20 @@ input#query_box:hover
 
 input#search_button
 {
-    font-family: arial,sans-serif;
+    font-family: "WeeklyPro-Regular";
     font-size:10px;
-    height: 40px;
+    height: 46px;
     width: 60px;
     color: #666666;
+    background-color: transparent;
     font-weight: bold;
     font-size: 1.2em;
-    background-color: #F5F5F5;
+    /* background-color: #F5F5F5; */
     border-radius: 75px;
-    border: none;
+    border: 2px solid #666666;
     vertical-align: middle;
     line-height: 40px;
+    outline-style: none;
 }
 
 input#search_button:hover
@@ -123,5 +132,7 @@ input#search_button:hover
 
 body
 {
-    background-color: rgb(21, 21, 36);
+    /* background-color: rgb(21, 21, 36); */
+    background-image: url("http://p0u4yewt0.bkt.clouddn.com/bg.jpg");
+    background-size: cover;
 }

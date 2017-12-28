@@ -1,5 +1,9 @@
 package search.controller;
 
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
@@ -23,10 +27,11 @@ import org.elasticsearch.search.suggest.SuggestionBuilder;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import search.util.LanguageService;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +45,7 @@ public class MainSearchController {
 
     public static final String DEFAULT_START_AT = "1970-01-01";
     public static final int RESULT_PER_PAGE = 10;
-    public static final String DEFAULT_INDEX = "albums";
+    public static final String DEFAULT_INDEX = "new_albums";
     public static final String DEFAULT_TYPE = "album";
     public static final String PARAM_PUB_TIME = "pub_time";
     public static final String PARAM_TITLE = "title";
@@ -52,6 +57,8 @@ public class MainSearchController {
     public static final String PARAM_URL = "url";
     public static final String PARAM_SUGGEST_FIELD = "suggest";
     public static final String PARAM_SUGGEST_NAME = "suggest_album";
+	public static final String PARAM_APP_ID = "APP_ID";
+	public static final String PARAM_SECURITY_KEY = "SECURITY_KEY";
     public static final String CONFIG_PATH = "config/server.conf";
     public static final String ELASTIC_HOST = "ELASTIC_HOST";
 	public static final String ELASTIC_PORT = "ELASTIC_PORT";
@@ -60,6 +67,8 @@ public class MainSearchController {
 	public String elasticHost;
 	public int elasticPort;
 	public String elasticScheme;
+
+	public LanguageService languageService;
 
 	private static Logger logger = LogManager.getLogger(MainSearchController.class);
 
@@ -71,6 +80,8 @@ public class MainSearchController {
 			this.elasticHost = jsonObject.get(ELASTIC_HOST).getAsString();
 			this.elasticPort = jsonObject.get(ELASTIC_PORT).getAsInt();
 			this.elasticScheme = jsonObject.get(ELASTIC_SCHEME).getAsString();
+			this.languageService = new LanguageService(jsonObject.get(PARAM_APP_ID).getAsString(),
+					jsonObject.get(PARAM_SECURITY_KEY).getAsString());
 		} catch (IOException e) {
 			throw new RuntimeException();
 		}
@@ -103,7 +114,6 @@ public class MainSearchController {
 
     	logger.info("QUERY:" + query);
         map.put("query", query);
-//        System.out.println(query);
         return "resultPage";
     }
 
@@ -115,40 +125,53 @@ public class MainSearchController {
      */
     @PostMapping("/loadSearchResult")
     @ResponseBody
-    public List<SearchResult> getSearchResult(@RequestBody Query query) {
+    public List<SearchResult> getSearchResult(@RequestBody Query query) throws Exception{
 
         List<SearchResult> results = new ArrayList<>();
 
         // get query parameter
-        String startAt = query.getStartAt() == null
-                ? DEFAULT_START_AT
-                : query.getStartAt();
-
-        String endAt = query.getEndAt() == null
-                ? LocalDateTime.now().toLocalDate().toString()
-                : query.getEndAt();
-
+        String startAt = query.getStartAt();
+        String endAt = query.getEndAt();
         int pageCount = query.getPage();
         String queryStr = query.getQuery();
+        int size = query.getSize();
 
         // build elastic query
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        QueryBuilder elasticQuery = QueryBuilders.boolQuery()
-                .must(QueryBuilders.rangeQuery(PARAM_PUB_TIME).gte(startAt).lte(endAt))
-                .should(QueryBuilders.matchQuery(PARAM_TITLE, queryStr))
-                .should(QueryBuilders.matchQuery(PARAM_TITLE_PINYIN, queryStr))
-                .should(QueryBuilders.matchQuery(PARAM_TITLE_ENGLISH, queryStr))
-				.minimumShouldMatch(1);
+        QueryBuilder elasticQuery;
 
+        // language detection
+        if(languageService.isEnglish(queryStr)) {
+        	String pinyinQuery = languageService.fromEnglish(queryStr);
+			elasticQuery = QueryBuilders.boolQuery()
+					.must(QueryBuilders.rangeQuery(PARAM_PUB_TIME).gte(startAt).lte(endAt))
+					.should(QueryBuilders.matchQuery(PARAM_TITLE, queryStr))
+					.should(QueryBuilders.matchQuery(PARAM_TITLE_PINYIN, pinyinQuery))
+					.should(QueryBuilders.matchQuery(PARAM_TITLE_ENGLISH, queryStr))
+					.minimumShouldMatch(1);
+		} else {
+			String englishQuery = languageService.toEnglish(queryStr);
+			elasticQuery = QueryBuilders.boolQuery()
+					.must(QueryBuilders.rangeQuery(PARAM_PUB_TIME).gte(startAt).lte(endAt))
+					.should(QueryBuilders.matchQuery(PARAM_TITLE, queryStr))
+					.should(QueryBuilders.matchQuery(PARAM_TITLE_PINYIN, queryStr))
+					.should(QueryBuilders.matchQuery(PARAM_TITLE_ENGLISH, englishQuery))
+					.minimumShouldMatch(1);
+		}
+
+		// deal with different page size
         sourceBuilder.query(elasticQuery);
-        sourceBuilder.from(pageCount * RESULT_PER_PAGE).size(RESULT_PER_PAGE);
+        if(size != RESULT_PER_PAGE) {
+			sourceBuilder.from(pageCount * RESULT_PER_PAGE).size(size);
+		} else {
+			sourceBuilder.from(pageCount * RESULT_PER_PAGE).size(RESULT_PER_PAGE);
+		}
         SearchRequest searchRequest = new SearchRequest(DEFAULT_INDEX);
         searchRequest.types(DEFAULT_TYPE);
         searchRequest.source(sourceBuilder);
 
+		// send query to elastic-search and parse response
 		RestHighLevelClient client = null;
-
-        // send query to elastic-search and parse response
 		try {
 			client = new RestHighLevelClient(
 					RestClient.builder(new HttpHost(elasticHost, elasticPort, elasticScheme)));
@@ -205,7 +228,6 @@ public class MainSearchController {
         searchRequest.source(searchSourceBuilder);
 
 		RestHighLevelClient client = null;
-
 		try {
 			client = new RestHighLevelClient(
 					RestClient.builder(new HttpHost(elasticHost, elasticPort, elasticScheme)));

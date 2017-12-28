@@ -15,12 +15,18 @@ input#query_box
     height: 40px;
     letter-spacing: 0.6px;
     padding-left: 10px;
-    background-color: #9c9c9cc0;
+    /* background-color: #9c9c9cc0; */
+    background-color: transparent;
     /* background-color: white; */
     color: white;
-    border:  rgb(21, 21, 36) 1px solid;
+    border:  #9c9c9cc0 1px solid;
     border-radius: 5px;
     outline: none;
+}
+
+input#query_box:hover
+{
+    border: yellow 1px solid;
 }
 
 div#query_info
@@ -64,11 +70,16 @@ input#search_button
     width: 60px;
     color: yellow;
     font-weight: bold;
-    background-color: #9c9c9cc0;
+    background-color: transparent;
     border-radius: 75px;
-    border: rgb(21, 21, 36) 1px solid;
+    border: #9c9c9cc0 1px solid;
     /* border: none; */
     outline: none;
+}
+
+input#search_button:hover
+{
+    border: yellow 1px solid;
 }
 
 div.div-inline
@@ -101,7 +112,7 @@ div.t-filter
 input.datepicker
 {
     height: 26px;
-    background-color: #9c9c9cc0;
+    background-color: transparent;
     border:  white 1px solid;
     border-radius: 5px;
     outline: none;
@@ -125,13 +136,18 @@ button.t-btn
     height: 25px;
     color: yellow;
     font-weight: bold;
-    background-color: #9c9c9cc0;
+    background-color: transparent;
     border-radius: 75px;
-    border: rgb(21, 21, 36) 1px solid;
+    border: #9c9c9cc0 1px solid;
     /* border: none; */
     outline: none;
     width: 60px;
     text-align: center;
+}
+
+button.t-btn:hover
+{
+    border: yellow 1px solid;
 }
 
 span.t
