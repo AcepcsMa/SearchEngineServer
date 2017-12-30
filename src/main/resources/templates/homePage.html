@@ -4,6 +4,8 @@
     <title>Ace Search Engine</title>
     <meta charset="utf-8" />
     <meta name="author" content="Haoxiang Ma" />
+    <link rel="icon" href="http://p0u4yewt0.bkt.clouddn.com/icon48.png" type="image/x-icon"/>
+    <link rel="shortcut icon" href="http://p0u4yewt0.bkt.clouddn.com/icon48.png" type="image/x-icon"/>
     <link rel="stylesheet" href="/css/index.css" />
     <script src="/js/index.js" charset="utf-8"></script>
     <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.js" charset="utf-8"></script>
@@ -12,14 +14,17 @@
     <link rel="stylesheet" href="/css/jquery-ui.css" />
 </head>
 <body>
-    <div id="outer">
+    <div id="header">
+        <a id="header-my-profile" href="/about-me" target="_blank">All About Me</a>
+    </div>
+    <div id="outer"> 
         <canvas id="mycanvas" ></canvas>
         <div id="container">
             <div id="title">
-                <a id="my_profile" href="https://github.com/AcepcsMa" target="_blank">
+                <a id="my_profile" href="/about-me" target="_blank">
                     <span id="engine_title"><em>Ace</em></span>
                 </a>
-                <p id="desc"><i>Focus on picture search</i></p>
+                <p id="desc"><i>Focus On Image Search</i></p>
             </div>
             <div id="search">
                 <form action="/search" method="get" style="text-align: center;">

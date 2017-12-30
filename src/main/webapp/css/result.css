@@ -123,6 +123,11 @@ input.datepicker
     width: 4%;
 }
 
+input.datepicker:hover
+{
+    border:yellow 1px solid;
+}
+
 div#t-btn-group
 {
     margin-left: 15px;
@@ -254,17 +259,55 @@ figcaption > div {
 	height: 50%;
 }
 
-h4,
+figure span,
 figure p {
 	-webkit-transform: translate3d(0,40px,0);
 	transform: translate3d(0,40px,0);
 }
 
-h4 {
-	-webkit-transition: -webkit-transform 0.35s;
+figure span 
+{
+    -webkit-transition: -webkit-transform 0.35s;
     transition: transform 0.35s;
     opacity: 0;
-    color: yellow;
+    color: #666666;
+    font-weight: bold;
+    font-family: "WeeklyPro-Regular";
+}
+
+@media only screen and (max-width: 1500px) {
+    figure span,
+    figure p 
+    {
+        font-size: 1em;
+        letter-spacing: 1px;
+    }
+}
+
+@media only screen and (max-width: 1300px) {
+    figure span,
+    figure p
+    {
+        font-size: 0.7em;
+        letter-spacing: 1px;
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    figure span,
+    figure p
+    {
+        font-size: 0.1em;
+    }
+}
+
+@media only screen and (min-width: 1501px) {
+    figure span,
+    figure p
+    {
+        font-size: 1.2em;
+        letter-spacing: 1px;
+    }
 }
 
 figure p {
@@ -284,18 +327,22 @@ figure:hover img
     opacity: 0.1;
 }
 
-figure:hover p,
-figure:hover h4 {
-    opacity: 1;
+figure:hover p
+{
     color: yellow;
+    opacity: 1;
 }
 
+figure:hover span
+{
+    opacity: 1
+}
 
 figure:hover img,
-figure:hover h4,
+figure:hover span,
 figure:hover p {
 	-webkit-transform: translate3d(0,0,0);
-	transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
 }
 
 figure:hover p {
@@ -384,4 +431,23 @@ div#error_msg_div
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     font-size: 1.5em;
+}
+
+div.float-btn
+{
+    position: fixed;
+    height: 50px;
+    width: 50px;
+    bottom: 120px;
+    right: 50px;
+    /* background: wheat; */
+    display: none;
+    border-radius: 50%;
+    background: wheat url("http://p0u4yewt0.bkt.clouddn.com/top32.png") center center no-repeat;
+}
+
+div.float-btn:hover
+{
+    background: transparent url("http://p0u4yewt0.bkt.clouddn.com/icon48.png") center center no-repeat;
+    border: rgb(21, 21, 36) 1px solid;
 }

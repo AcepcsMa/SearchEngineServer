@@ -1,7 +1,11 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-        <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.js" charset="utf-8"></script>
+    <head>
+        <title th:text="${query}"></title>
+        <link rel="icon" href="http://p0u4yewt0.bkt.clouddn.com/icon48.png" type="image/x-icon"/>
+        <link rel="shortcut icon" href="http://p0u4yewt0.bkt.clouddn.com/icon48.png" type="image/x-icon"/>
+        <!-- <script src="https://s2.pstatp.com/cdn/jquery/3.2.1/jquery.js" charset="utf-8"></script> -->
+        <script src="/js/jquery-3.2.1.js"></script>
         <script src="/js/result.js" charset="utf-8"></script>
         <link href="/css/result.css" rel="stylesheet" />
         <script src="https://cdn.staticfile.org/jqueryui/1.12.1/jquery-ui.js" charset="utf-8"></script>
@@ -55,10 +59,13 @@
         <div id="ph">
             
         </div>
+        <div class="float-btn">
+            
+        </div>
         <footer id="bottom_slide">
             <span>Designed and developed by Haoxiang Ma!</span>
             <p>
-                <a href="http://www.google.com"><b>ALL ABOUT ME</b></a>
+                <a href="/about-me" target="_blank"><b>ALL ABOUT ME</b></a>
             </p>
         </footer>
         <script>
@@ -70,6 +77,8 @@
             $(document).ready(function() {
                 initData();
             });
+
+            $(document).ready(goTop());
 
             $("#query_box").autocomplete({
                 source: "/ac"
@@ -90,12 +99,6 @@
                 $("#error_info").css("height", $("#results").innerHeight() + "px");
                 $("#error_logo_div").css("padding-top", $("#results").innerHeight()/3 + "px");
                 $("#error_msg_div").css("padding-top", $("#results").innerHeight()/3 + "px");
-            });
-
-            window.onpageshow(function(event) {
-                if(event.persisted) {
-                    window.location.reload();
-                }
             });
         </script>
     </body>

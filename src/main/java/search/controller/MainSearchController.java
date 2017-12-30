@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import search.data.Query;
 import search.data.SearchResult;
 import org.apache.http.HttpHost;
@@ -45,7 +46,7 @@ public class MainSearchController {
 
     public static final String DEFAULT_START_AT = "1970-01-01";
     public static final int RESULT_PER_PAGE = 10;
-    public static final String DEFAULT_INDEX = "new_albums";
+    public static final String DEFAULT_INDEX = "albums";
     public static final String DEFAULT_TYPE = "album";
     public static final String PARAM_PUB_TIME = "pub_time";
     public static final String PARAM_TITLE = "title";
@@ -85,6 +86,7 @@ public class MainSearchController {
 		} catch (IOException e) {
 			throw new RuntimeException();
 		}
+
 	}
 
     /**
@@ -142,11 +144,10 @@ public class MainSearchController {
 
         // language detection
         if(languageService.isEnglish(queryStr)) {
-        	String pinyinQuery = languageService.fromEnglish(queryStr);
+        	String chineseQuery = languageService.fromEnglish(queryStr);
 			elasticQuery = QueryBuilders.boolQuery()
 					.must(QueryBuilders.rangeQuery(PARAM_PUB_TIME).gte(startAt).lte(endAt))
-					.should(QueryBuilders.matchQuery(PARAM_TITLE, queryStr))
-					.should(QueryBuilders.matchQuery(PARAM_TITLE_PINYIN, pinyinQuery))
+					.should(QueryBuilders.matchQuery(PARAM_TITLE, chineseQuery))
 					.should(QueryBuilders.matchQuery(PARAM_TITLE_ENGLISH, queryStr))
 					.minimumShouldMatch(1);
 		} else {
@@ -154,7 +155,6 @@ public class MainSearchController {
 			elasticQuery = QueryBuilders.boolQuery()
 					.must(QueryBuilders.rangeQuery(PARAM_PUB_TIME).gte(startAt).lte(endAt))
 					.should(QueryBuilders.matchQuery(PARAM_TITLE, queryStr))
-					.should(QueryBuilders.matchQuery(PARAM_TITLE_PINYIN, queryStr))
 					.should(QueryBuilders.matchQuery(PARAM_TITLE_ENGLISH, englishQuery))
 					.minimumShouldMatch(1);
 		}
@@ -166,6 +166,15 @@ public class MainSearchController {
 		} else {
 			sourceBuilder.from(pageCount * RESULT_PER_PAGE).size(RESULT_PER_PAGE);
 		}
+
+		// build highlighter
+		sourceBuilder.highlighter(new HighlightBuilder()
+				.field("title")
+				.highlighterType("plain")
+				.field("title.english")
+				.highlighterType("plain")
+				.preTags("<span style=\"color:yellow\">")
+				.postTags("</span>"));
         SearchRequest searchRequest = new SearchRequest(DEFAULT_INDEX);
         searchRequest.types(DEFAULT_TYPE);
         searchRequest.source(sourceBuilder);
@@ -180,7 +189,11 @@ public class MainSearchController {
 			for (SearchHit hit : hits) {
 				Map<String, Object> source = hit.getSourceAsMap();
 				SearchResult result = new SearchResult();
-				result.setTitle((String)source.get(PARAM_TITLE));
+				try {
+					result.setTitle(hit.getHighlightFields().get("title").fragments()[0].string());
+				} catch (Exception e) {
+					result.setTitle(hit.getHighlightFields().get("title.english").fragments()[0].string());
+				}
 				result.setDescription((String)source.get(PARAM_CONTENT));
 				result.setAvatarUrl((String)source.get(PARAM_AVATAR_URL));
 				result.setUrl((String)source.get(PARAM_URL));

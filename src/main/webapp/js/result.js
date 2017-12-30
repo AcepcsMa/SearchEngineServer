@@ -90,12 +90,12 @@ function fill(data, pageCount) {
         var caption = document.createElement("figcaption");
         
         var innerDiv = document.createElement("div");
-        var h4 = document.createElement("h4");
-        h4.innerText = title;
-        var innerP = document.createElement("p");
-        innerP.innerText = picCount + " photos";
-        innerDiv.appendChild(h4);
-        innerDiv.appendChild(innerP);
+        var span1 = document.createElement("span");
+        span1.innerHTML = title;
+        var p2 = document.createElement("p");
+        p2.innerText = picCount + " images";
+        innerDiv.appendChild(span1);
+        innerDiv.appendChild(p2);
         caption.appendChild(innerDiv);
 
         a.appendChild(img);
@@ -110,6 +110,7 @@ function fill(data, pageCount) {
         }
     }
     $(".lm-btn").css("display", "initial");
+    $(".float-btn").css("display", "initial");
 }
 
 function loadSearchData(pageCount, size) {
@@ -145,4 +146,22 @@ function initData() {
     initSize = 20;
     loadSearchData(curPage, initSize);
     curPage += 2;
+}
+
+function goTop() {
+    BackTop=function(btnClass){
+        var btn=document.getElementsByClassName(btnClass)[0];
+        var d=document.documentElement;
+        window.onscroll=set;
+        btn.onclick=function (){
+            btn.style.display="none";
+            window.onscroll=null;
+            this.timer=setInterval(function(){
+                d.scrollTop-=Math.ceil(d.scrollTop*0.1);
+                if(d.scrollTop==0) clearInterval(btn.timer,window.onscroll=set);
+            },25);
+        };
+        function set(){btn.style.display=d.scrollTop?'block':"none"}
+    };
+    BackTop('float-btn');
 }
