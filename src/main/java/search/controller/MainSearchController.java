@@ -1,14 +1,9 @@
 package search.controller;
 
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.TranslateOptions;
-import com.google.cloud.translate.Translation;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import search.data.Keyword;
 import search.data.Query;
 import search.data.SearchResult;
 import org.apache.http.HttpHost;
@@ -29,13 +24,12 @@ import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import search.util.LanguageService;
+import search.util.Neo4jTool;
+import search.util.WordSegmentService;
 
-import java.io.FileReader;
 import java.io.IOException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The main search service controller.
@@ -64,10 +58,17 @@ public class MainSearchController {
     public static final String ELASTIC_HOST = "ELASTIC_HOST";
 	public static final String ELASTIC_PORT = "ELASTIC_PORT";
 	public static final String ELASTIC_SCHEME = "ELASTIC_SCHEME";
+	public static final String NEO4J_URI = "NEO4J_URI";
+	public static final String NEO4J_USER = "NEO4J_USER";
+	public static final String NEO4J_PASSWORD = "NEO4J_PASSWORD";
 
 	public String elasticHost;
 	public int elasticPort;
 	public String elasticScheme;
+
+	public String neo4jUri;
+	public String neo4jUser;
+	public String neo4jPassword;
 
 	public LanguageService languageService;
 
@@ -75,18 +76,30 @@ public class MainSearchController {
 
 	public MainSearchController() {
 
-		JsonParser parser = new JsonParser();
-		try {
-			JsonObject jsonObject = (JsonObject)parser.parse(new FileReader(CONFIG_PATH));
-			this.elasticHost = jsonObject.get(ELASTIC_HOST).getAsString();
-			this.elasticPort = jsonObject.get(ELASTIC_PORT).getAsInt();
-			this.elasticScheme = jsonObject.get(ELASTIC_SCHEME).getAsString();
-			this.languageService = new LanguageService(jsonObject.get(PARAM_APP_ID).getAsString(),
-					jsonObject.get(PARAM_SECURITY_KEY).getAsString());
-		} catch (IOException e) {
-			throw new RuntimeException();
-		}
+//		JsonParser parser = new JsonParser();
+//		try {
+//			JsonObject jsonObject = (JsonObject)parser.parse(new FileReader(CONFIG_PATH));
+//			neo4jUri = jsonObject.get(NEO4J_URI).getAsString();
+//			neo4jUser = jsonObject.get(NEO4J_USER).getAsString();
+//			neo4jPassword = jsonObject.get(NEO4J_PASSWORD).getAsString();
+//			elasticHost = jsonObject.get(ELASTIC_HOST).getAsString();
+//			elasticPort = jsonObject.get(ELASTIC_PORT).getAsInt();
+//			elasticScheme = jsonObject.get(ELASTIC_SCHEME).getAsString();
+//			languageService = new LanguageService(jsonObject.get(PARAM_APP_ID).getAsString(),
+//					jsonObject.get(PARAM_SECURITY_KEY).getAsString());
+//		} catch (IOException e) {
+//			throw new RuntimeException();
+//		}
 
+		this.elasticHost = "118.89.186.21";
+		this.elasticPort = 3680;
+		this.elasticScheme = "http";
+		this.neo4jUri = "bolt://localhost:7687";
+		this.neo4jUser = "neo4j";
+		this.neo4jPassword = "password";
+		String appId = "20171227000109497";
+		String securityKey = "CweVRHnchxItlMAxMVeG";
+		this.languageService = new LanguageService(appId, securityKey);
 	}
 
     /**
@@ -268,4 +281,41 @@ public class MainSearchController {
 
         return results;
     }
+
+	/**
+	 * Get recommended words for current query (query extension)
+	 * @param query query
+	 * @return list of recommended words
+	 * @throws IOException
+	 */
+    @PostMapping("/recommend")
+    @ResponseBody
+    public List<String> recommend(@RequestBody Query query) throws IOException {
+
+		Neo4jTool neo4jTool = new Neo4jTool(neo4jUri, neo4jUser, neo4jPassword);
+
+		// split the query, and get connected words for each
+		String queryStr = query.getQuery();
+		List<String> words = WordSegmentService.split(queryStr);
+		Set<Keyword> connectedWords = new TreeSet<>();
+		for(String word : words) {
+			connectedWords.addAll(neo4jTool.getConnectedKeywords(word));
+		}
+
+
+		Iterator<Keyword> it = connectedWords.iterator();
+		List<String> recommendations = new ArrayList<>();
+		while(it.hasNext()) {
+			recommendations.add(it.next().getWord());
+		}
+		return recommendations;
+	}
+
+//	@GetMapping("/test")
+//	@ResponseBody
+//	public String test() {
+//		Neo4jTool neo4jTool = new Neo4jTool("bolt://localhost:7687", "neo4j", "password");
+//		neo4jTool.getConnectedKeywords("clouds");
+//		return "hh";
+//	}
 }
