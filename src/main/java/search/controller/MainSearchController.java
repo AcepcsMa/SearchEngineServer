@@ -1,5 +1,7 @@
 package search.controller;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -27,6 +29,7 @@ import search.util.LanguageService;
 import search.util.Neo4jTool;
 import search.util.WordSegmentService;
 
+import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.*;
@@ -76,30 +79,20 @@ public class MainSearchController {
 
 	public MainSearchController() {
 
-//		JsonParser parser = new JsonParser();
-//		try {
-//			JsonObject jsonObject = (JsonObject)parser.parse(new FileReader(CONFIG_PATH));
-//			neo4jUri = jsonObject.get(NEO4J_URI).getAsString();
-//			neo4jUser = jsonObject.get(NEO4J_USER).getAsString();
-//			neo4jPassword = jsonObject.get(NEO4J_PASSWORD).getAsString();
-//			elasticHost = jsonObject.get(ELASTIC_HOST).getAsString();
-//			elasticPort = jsonObject.get(ELASTIC_PORT).getAsInt();
-//			elasticScheme = jsonObject.get(ELASTIC_SCHEME).getAsString();
-//			languageService = new LanguageService(jsonObject.get(PARAM_APP_ID).getAsString(),
-//					jsonObject.get(PARAM_SECURITY_KEY).getAsString());
-//		} catch (IOException e) {
-//			throw new RuntimeException();
-//		}
-
-		this.elasticHost = "118.89.186.21";
-		this.elasticPort = 3680;
-		this.elasticScheme = "http";
-		this.neo4jUri = "bolt://localhost:7687";
-		this.neo4jUser = "neo4j";
-		this.neo4jPassword = "password";
-		String appId = "20171227000109497";
-		String securityKey = "CweVRHnchxItlMAxMVeG";
-		this.languageService = new LanguageService(appId, securityKey);
+		JsonParser parser = new JsonParser();
+		try {
+			JsonObject jsonObject = (JsonObject)parser.parse(new FileReader(CONFIG_PATH));
+			neo4jUri = jsonObject.get(NEO4J_URI).getAsString();
+			neo4jUser = jsonObject.get(NEO4J_USER).getAsString();
+			neo4jPassword = jsonObject.get(NEO4J_PASSWORD).getAsString();
+			elasticHost = jsonObject.get(ELASTIC_HOST).getAsString();
+			elasticPort = jsonObject.get(ELASTIC_PORT).getAsInt();
+			elasticScheme = jsonObject.get(ELASTIC_SCHEME).getAsString();
+			languageService = new LanguageService(jsonObject.get(PARAM_APP_ID).getAsString(),
+					jsonObject.get(PARAM_SECURITY_KEY).getAsString());
+		} catch (IOException e) {
+			throw new RuntimeException();
+		}
 	}
 
     /**
