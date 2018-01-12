@@ -8,8 +8,8 @@
         <script src="/js/jquery-3.2.1.js"></script>
         <script src="/js/result.js" charset="utf-8"></script>
         <link href="/css/result.css" rel="stylesheet" />
-        <script src="https://cdn.staticfile.org/jqueryui/1.12.1/jquery-ui.js" charset="utf-8"></script>
-        <script src="https://cdn.staticfile.org/jqueryui/1.12.1/jquery-ui.min.js" charset="utf-8"></script>
+        <script src="https://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.js" charset="utf-8"></script>
+        <script src="https://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.js" charset="utf-8"></script>
         <link rel="stylesheet" href="/css/jquery-ui.css" />
         <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" />
         <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -47,6 +47,9 @@
                     <button value="Apply" class="t-btn" onclick="applyTimeFilter()">Apply</button>
                 </div>
             </div>
+        </div>
+        <div id="recommend">
+            <span>Are you looking for: </span>
         </div>
         <div id="results">
         </div>
@@ -100,6 +103,8 @@
                 $("#error_logo_div").css("padding-top", $("#results").innerHeight()/3 + "px");
                 $("#error_msg_div").css("padding-top", $("#results").innerHeight()/3 + "px");
             });
+
+            $(document).ready(loadRecommend());
         </script>
     </body>
 </html>

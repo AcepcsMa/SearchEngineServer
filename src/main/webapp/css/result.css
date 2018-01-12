@@ -192,11 +192,47 @@ div#t-datepicker
     padding-right: 3px;
 }
 
+/* loading */
+img#loading
+{
+    height: 256px;
+    width: 256px;
+}
+
+/* recommend */
+div#recommend
+{
+    margin-top: 30px;
+    text-align: center;
+    font-style: italic;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+div#recommend span
+{
+    color: rgb(21, 21, 36);
+}
+
+div#recommend a
+{
+    text-decoration: underline;
+    margin-left: 15px;
+    color: #666666;
+}
+
+div#recommend a:hover
+{
+    text-decoration: none;
+    color: rgb(21, 21, 36);
+    text-shadow: 0 0 .1em, 0 0 .2em;
+}
+
 /* results */
 
 div#results
 {
-    /* text-align: center; */
+    text-align: center;
     vertical-align: middle;
     max-width: 70%;
     width: 70%;

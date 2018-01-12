@@ -22,11 +22,11 @@ public class TransApi {
 
 	public String getTransResult(String query, String from, String to) throws Exception{
 		Map<String, String> params = buildParams(query, from, to);
-		return HttpGet.get(TRANS_API_HOST, params);
+		return Get.get(TRANS_API_HOST, params);
 	}
 
 	private Map<String, String> buildParams(String query, String from, String to) throws Exception{
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new HashMap<>();
 		params.put(PARAM_QUERY, query);
 		params.put(PARAM_FROM, from);
 		params.put(PARAM_TO, to);

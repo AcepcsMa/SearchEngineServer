@@ -34,6 +34,7 @@ function resetTimeFilter() {
 function fill(data, pageCount) {
 
     if(data.length == 0 && notFound == true) {
+        $("#loading").remove();
         return;
     } else if(data.length == 0 && pageCount < 1) {
         errorInfo = document.createElement("div");
@@ -65,10 +66,12 @@ function fill(data, pageCount) {
         $("#error_msg_div").css("margin-top", $(window).innerHeight()/3 + "px");
 
         notFound = true;
+        $("#loading").remove();
         return;
     } else if(data.length == 0 && pageCount >= 2) {
         alert("Sorry, there is no more data...");
     }
+
 
     var imgSuffix = "?imageMogr2/auto-orient/thumbnail/250x250!/blur/1x0/quality/100|imageslim";
     var div = document.createElement("div");
@@ -111,9 +114,15 @@ function fill(data, pageCount) {
     }
     $(".lm-btn").css("display", "initial");
     $(".float-btn").css("display", "initial");
+    $("#loading").remove();
+    $(".lm-btn").css("background-image", "");
+    $(".lm-btn").text("Load More");
 }
 
 function loadSearchData(pageCount, size) {
+
+    $(".lm-btn").css("background", "rgb(21, 21, 36) url(http://p0u4yewt0.bkt.clouddn.com/button_load.gif?imageMogr2/auto-orient/thumbnail/30x30!/blur/1x0/quality/100|imageslim) center center no-repeat")
+    $(".lm-btn").text("");
 
     var startAt = getUrlParam("start");
     var endAt = getUrlParam("end");
@@ -137,12 +146,48 @@ function loadSearchData(pageCount, size) {
     });
 }
 
+function loadRecommend() {
+
+    var params = {
+        "query": $("#query_box").val()
+    };
+    $.ajax({
+        url: "/recommend",
+        type: "POST",
+        dataType: "json",
+        contentType : "application/json; charset=utf-8",
+        data: JSON.stringify(params),
+        success: function(data, status) {
+            console.log(data);
+            fillRecommend(data);
+        }
+    });
+}
+
+function fillRecommend(data) {
+    var divRecommend = document.getElementById("recommend");
+    for(var i = 0;i < data.length;i++) {
+        var a = document.createElement("a");
+        a.innerText = data[i];
+        a.setAttribute("href", "/search?query=" + data[i]);
+        divRecommend.appendChild(a);
+    }
+}
+
 // function loadMoreData() {
 //     curPage++;
 //     loadSearchData();
 // }
 
 function initData() {
+
+    // set loading gif
+    loadingImg = document.createElement("img");
+    loadingImg.setAttribute("id", "loading");
+    loadingImg.setAttribute("src", "http://p0u4yewt0.bkt.clouddn.com/load1.gif");
+    var results = document.getElementById("results");
+    results.appendChild(loadingImg);
+
     initSize = 20;
     loadSearchData(curPage, initSize);
     curPage += 2;

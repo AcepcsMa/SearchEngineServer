@@ -42,7 +42,8 @@ import java.util.*;
 public class MainSearchController {
 
     public static final String DEFAULT_START_AT = "1970-01-01";
-    public static final int RESULT_PER_PAGE = 10;
+    public static final int DEFAULT_RECOMMEND_COUNT = 6;
+    public static final int DEFAULT_RESULT_PER_PAGE = 10;
     public static final String DEFAULT_INDEX = "albums";
     public static final String DEFAULT_TYPE = "album";
     public static final String PARAM_PUB_TIME = "pub_time";
@@ -91,6 +92,7 @@ public class MainSearchController {
 			languageService = new LanguageService(jsonObject.get(PARAM_APP_ID).getAsString(),
 					jsonObject.get(PARAM_SECURITY_KEY).getAsString());
 		} catch (IOException e) {
+			logger.warn("ERROR:" + e.toString());
 			throw new RuntimeException();
 		}
 	}
@@ -142,7 +144,7 @@ public class MainSearchController {
         String endAt = query.getEndAt();
         int pageCount = query.getPage();
         String queryStr = query.getQuery();
-        int size = query.getSize();
+        int actualSize = query.getSize();
 
         // build elastic query
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
@@ -167,10 +169,10 @@ public class MainSearchController {
 
 		// deal with different page size
         sourceBuilder.query(elasticQuery);
-        if(size != RESULT_PER_PAGE) {
-			sourceBuilder.from(pageCount * RESULT_PER_PAGE).size(size);
+        if(actualSize != DEFAULT_RESULT_PER_PAGE) {
+			sourceBuilder.from(pageCount * DEFAULT_RESULT_PER_PAGE).size(actualSize);
 		} else {
-			sourceBuilder.from(pageCount * RESULT_PER_PAGE).size(RESULT_PER_PAGE);
+			sourceBuilder.from(pageCount * DEFAULT_RESULT_PER_PAGE).size(DEFAULT_RESULT_PER_PAGE);
 		}
 
 		// build highlighter
@@ -295,20 +297,11 @@ public class MainSearchController {
 			connectedWords.addAll(neo4jTool.getConnectedKeywords(word));
 		}
 
-
 		Iterator<Keyword> it = connectedWords.iterator();
 		List<String> recommendations = new ArrayList<>();
-		while(it.hasNext()) {
+		while(it.hasNext() && recommendations.size() < DEFAULT_RECOMMEND_COUNT) {
 			recommendations.add(it.next().getWord());
 		}
 		return recommendations;
 	}
-
-//	@GetMapping("/test")
-//	@ResponseBody
-//	public String test() {
-//		Neo4jTool neo4jTool = new Neo4jTool("bolt://localhost:7687", "neo4j", "password");
-//		neo4jTool.getConnectedKeywords("clouds");
-//		return "hh";
-//	}
 }

@@ -21,7 +21,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-class HttpGet {
+class Get {
 
 	protected static final int SOCKET_TIMEOUT = 10000;
 	protected static final String GET = "GET";
