@@ -48,7 +48,6 @@ public class MainSearchController {
     public static final String DEFAULT_TYPE = "album";
     public static final String PARAM_PUB_TIME = "pub_time";
     public static final String PARAM_TITLE = "title";
-    public static final String PARAM_TITLE_PINYIN = "title.pinyin";
     public static final String PARAM_TITLE_ENGLISH = "title.english";
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_AVATAR_URL = "avatar_url";
@@ -135,9 +134,7 @@ public class MainSearchController {
      */
     @PostMapping("/loadSearchResult")
     @ResponseBody
-    public List<SearchResult> getSearchResult(@RequestBody Query query) throws Exception{
-
-        List<SearchResult> results = new ArrayList<>();
+    public List<SearchResult> getSearchResult(@RequestBody Query query) throws Exception {
 
         // get query parameter
         String startAt = query.getStartAt();
@@ -189,6 +186,7 @@ public class MainSearchController {
 
 		// send query to elastic-search and parse response
 		RestHighLevelClient client = null;
+		List<SearchResult> results = new ArrayList<>();
 		try {
 			client = new RestHighLevelClient(
 					RestClient.builder(new HttpHost(elasticHost, elasticPort, elasticScheme)));
@@ -197,10 +195,13 @@ public class MainSearchController {
 			for (SearchHit hit : hits) {
 				Map<String, Object> source = hit.getSourceAsMap();
 				SearchResult result = new SearchResult();
-				try {
+				if(hit.getHighlightFields().containsKey("title")) {
 					result.setTitle(hit.getHighlightFields().get("title").fragments()[0].string());
-				} catch (Exception e) {
+				} else if(hit.getHighlightFields().containsKey("title.english")){
 					result.setTitle(hit.getHighlightFields().get("title.english").fragments()[0].string());
+				} else {
+					result.setTitle(null);
+					logger.warn("ERROR: NO TITLE");
 				}
 				result.setDescription((String)source.get(PARAM_CONTENT));
 				result.setAvatarUrl((String)source.get(PARAM_AVATAR_URL));

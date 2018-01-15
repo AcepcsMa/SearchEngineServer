@@ -39,7 +39,7 @@ public class WordSegmentService {
 		}
 	}
 
-	public static List<String> split(String sentence) throws IOException {
+	public static List<String> split(String sentence) {
 
 		List<String> words = new ArrayList<>();
 
@@ -51,19 +51,33 @@ public class WordSegmentService {
 		entity.setContentEncoding("UTF-8");
 		post.setEntity(entity);
 
-		HttpResponse response = client.execute(post);
-		BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-		String line = null;
-		StringBuilder result = new StringBuilder();
-		while((line = br.readLine()) != null) {
-			result.append(line);
+		BufferedReader br = null;
+		try {
+			HttpResponse response = client.execute(post);
+			br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			String line = null;
+			StringBuilder result = new StringBuilder();
+			while((line = br.readLine()) != null) {
+				result.append(line);
+			}
+			JsonParser parser = new JsonParser();
+			JsonArray array = (JsonArray) parser.parse(result.toString());
+			Iterator<JsonElement> it = array.iterator();
+			while(it.hasNext()) {
+				words.add(it.next().getAsString());
+			}
+		} catch (IOException e) {
+			logger.warn("ERROR:" + e.toString());
+		} finally {
+			if(br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					logger.warn("ERROR:" + e.toString());
+				}
+			}
 		}
-		JsonParser parser = new JsonParser();
-		JsonArray array = (JsonArray) parser.parse(result.toString());
-		Iterator<JsonElement> it = array.iterator();
-		while(it.hasNext()) {
-			words.add(it.next().getAsString());
-		}
+
 		return words;
 	}
 }
