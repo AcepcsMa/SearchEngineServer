@@ -25,9 +25,10 @@ import org.elasticsearch.search.suggest.SuggestionBuilder;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import search.util.LanguageService;
+import search.service.LanguageService;
+import search.service.QueryService;
 import search.util.Neo4jTool;
-import search.util.WordSegmentService;
+import search.service.WordSegmentService;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -47,12 +48,12 @@ public class MainSearchController {
     public static final String DEFAULT_INDEX = "albums";
     public static final String DEFAULT_TYPE = "album";
     public static final String PARAM_PUB_TIME = "pub_time";
-    public static final String PARAM_TITLE = "title";
-    public static final String PARAM_TITLE_ENGLISH = "title.english";
-    public static final String PARAM_CONTENT = "content";
-    public static final String PARAM_AVATAR_URL = "avatar_url";
+	public static final String PARAM_TITLE = "title";
+	public static final String PARAM_TITLE_ENGLISH = "title.english";
+	public static final String PARAM_CONTENT = "content";
+	public static final String PARAM_AVATAR_URL = "avatar_url";
 	public static final String PARAM_PIC_COUNT = "pic_count";
-    public static final String PARAM_URL = "url";
+	public static final String PARAM_URL = "url";
     public static final String PARAM_SUGGEST_FIELD = "suggest";
     public static final String PARAM_SUGGEST_NAME = "suggest_album";
 	public static final String PARAM_APP_ID = "APP_ID";
@@ -144,42 +145,18 @@ public class MainSearchController {
         int actualSize = query.getSize();
 
         // build elastic query
-        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        QueryBuilder elasticQuery;
+        QueryBuilder elasticQuery = QueryService.buildQuery(languageService, queryStr,
+															startAt, endAt);
 
-        // language detection
-        if(languageService.isEnglish(queryStr)) {
-        	String chineseQuery = languageService.fromEnglish(queryStr);
-			elasticQuery = QueryBuilders.boolQuery()
-					.must(QueryBuilders.rangeQuery(PARAM_PUB_TIME).gte(startAt).lte(endAt))
-					.should(QueryBuilders.matchQuery(PARAM_TITLE, chineseQuery))
-					.should(QueryBuilders.matchQuery(PARAM_TITLE_ENGLISH, queryStr))
-					.minimumShouldMatch(1);
+		SearchSourceBuilder sourceBuilder = null;
+		if(actualSize == DEFAULT_RESULT_PER_PAGE) {
+			sourceBuilder = QueryService.getSourceBuilder(pageCount * DEFAULT_RESULT_PER_PAGE,
+															DEFAULT_RESULT_PER_PAGE);
 		} else {
-			String englishQuery = languageService.toEnglish(queryStr);
-			elasticQuery = QueryBuilders.boolQuery()
-					.must(QueryBuilders.rangeQuery(PARAM_PUB_TIME).gte(startAt).lte(endAt))
-					.should(QueryBuilders.matchQuery(PARAM_TITLE, queryStr))
-					.should(QueryBuilders.matchQuery(PARAM_TITLE_ENGLISH, englishQuery))
-					.minimumShouldMatch(1);
+			sourceBuilder = QueryService.getSourceBuilder(pageCount * DEFAULT_RESULT_PER_PAGE,
+															actualSize);
 		}
-
-		// deal with different page size
-        sourceBuilder.query(elasticQuery);
-        if(actualSize != DEFAULT_RESULT_PER_PAGE) {
-			sourceBuilder.from(pageCount * DEFAULT_RESULT_PER_PAGE).size(actualSize);
-		} else {
-			sourceBuilder.from(pageCount * DEFAULT_RESULT_PER_PAGE).size(DEFAULT_RESULT_PER_PAGE);
-		}
-
-		// build highlighter
-		sourceBuilder.highlighter(new HighlightBuilder()
-				.field("title")
-				.highlighterType("plain")
-				.field("title.english")
-				.highlighterType("plain")
-				.preTags("<span style=\"color:yellow\">")
-				.postTags("</span>"));
+		sourceBuilder.query(elasticQuery);
         SearchRequest searchRequest = new SearchRequest(DEFAULT_INDEX);
         searchRequest.types(DEFAULT_TYPE);
         searchRequest.source(sourceBuilder);
